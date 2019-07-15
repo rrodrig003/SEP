@@ -1,39 +1,56 @@
 import { combineReducers, createStore, applyMiddleware } from 'redux';
-// const { combineReducers, createStore, applyMiddleware } = require('redux')
 import axios from 'axios';
-import loggingMiddleware from 'redux-logger';
 import thunkMiddleware from 'redux-thunk';
+import { browserHistory, Redirect } from 'react-router'
+import React, { Component } from 'react';
+
 
 //ACTION CONSTANTS
 const GET_CAMPUSES = 'GET_CAMPUSES'
 const GET_STUDENTS = 'GET_STUDENTS'
+const GET_SINGLE_CAMPUS = 'GET_SINGLE_CAMPUS'
+const GET_SINGLE_STUDENT = 'GET_SINGLE_STUDENT'
 
 //ACTION CREATORS
+
 const getCampuses = (campuses) => ({ type: GET_CAMPUSES, campuses})
 
 const getStudents = (students) => ({ type: GET_STUDENTS, students})
 
-//INITIAL STATE
-// const initialState = {
-//   campuses: [],
-//   students: []
-// }
+const getSingleCampus = (campus) => ({ type: GET_SINGLE_CAMPUS, campus})
+
+const getSingleStudent = (student) => ({ type: GET_SINGLE_STUDENT, student})
+
+//STATE
+const campusState = {
+  campuses: [],
+  singleCampus: {}
+}
+
+const studentState = {
+  students: [],
+  singleStudent: {}
+}
 
 // campus REDUCER
-const campusReducer = (state = [], action) => {
+const campusReducer = (state = campusState, action) => {
   switch (action.type) {
     case GET_CAMPUSES:
-      return [...state, ...action.campuses]
+      return {...state, campuses: [...state.campuses, ...action.campuses] }
+    case GET_SINGLE_CAMPUS:
+      return {...state, singleCampus: action.campus }
     default:
       return state
   }
 }
 
 // student REDUCER
-const studentReducer = (state = [], action) => {
+const studentReducer = (state = studentState, action) => {
   switch (action.type) {
     case GET_STUDENTS:
-        return [...state, ...action.students]
+        return {...state, students: [...state.students, ...action.students] }
+    case GET_SINGLE_STUDENT:
+      return {...state, singleStudent: action.student }
     default:
       return state
   }
@@ -42,23 +59,51 @@ const studentReducer = (state = [], action) => {
 //THUNKS
 
 export const fetchCampuses = () => (dispatch) => {
-  axios.get('/campuses')
+  return axios.get('/api/campuses')
     .then(res => res.data)
-    .then(( campuses ) => dispatch(getCampuses(campuses)))
+    .then(( campuses ) => {
+      // console.log('THUNK_FETCH_CAMPUSES')
+      dispatch(getCampuses(campuses))
+    })
+    .catch(e => console.error('***ERROR IN fetchCampuses:', e))
 }
 
 export const fetchStudents = () => (dispatch) => {
-  axios.get('/students')
+  return axios.get('/api/students')
     .then(res => res.data)
-    .then((students) => dispatch(getStudents(students)))
+    .then((students) => {
+      // console.log('THUNK_FETCH_STUDENTS')
+      dispatch(getStudents(students))
+    })
+    .catch(e => console.error('***ERROR IN fetchStudents:', e))
+}
+
+export const fetchSingleCampus = (campusId) => (dispatch, getState) => {
+  // console.log('FETCH SINGLE CAMP:', typeof campusId, campusId)
+  return axios.get(`/api/campuses/${campusId}`)
+    .then(res => res.data)
+    .then(( [campus] ) => { 
+      dispatch(getSingleCampus(campus))
+    })
+    .catch(e => console.error('***ERROR IN fetchSingleCampus:', e))
+}
+
+export const fetchSingleStudent = (id) => (dispatch) => {
+  // console.log('AXIOS FETCH SINGLE STUDENT:', typeof id, id)
+  return axios.get(`/api/students/${id}`)
+    .then(res => res.data)
+    .then(( [student] ) => {
+      console.log('THUNK_FETCH_SINGLE_STUDENT')
+      dispatch(getSingleStudent(student))
+    })
+    .catch(e => console.error('***ERROR IN fetchSingleStudent:', e))
 }
 
 //root reducer
 const rootReducer = combineReducers({ campuses: campusReducer, students: studentReducer})
 
+// CREATE STORE AND MIDDLEWARE
 const store = createStore(rootReducer, applyMiddleware(thunkMiddleware))
 
 export default store;
 // console.log(store.getState())
-
-// CREATE STORE AND MIDDLEWARE
