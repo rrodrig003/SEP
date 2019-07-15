@@ -11,6 +11,9 @@ const GET_STUDENTS = 'GET_STUDENTS'
 const GET_SINGLE_CAMPUS = 'GET_SINGLE_CAMPUS'
 const GET_SINGLE_STUDENT = 'GET_SINGLE_STUDENT'
 
+const ADD_NEW_CAMPUS = 'ADD_NEW_CAMPUS'
+const ADD_NEW_STUDENT = 'ADD_NEW_STUDENT'
+
 //ACTION CREATORS
 
 const getCampuses = (campuses) => ({ type: GET_CAMPUSES, campuses})
@@ -20,6 +23,9 @@ const getStudents = (students) => ({ type: GET_STUDENTS, students})
 const getSingleCampus = (campus) => ({ type: GET_SINGLE_CAMPUS, campus})
 
 const getSingleStudent = (student) => ({ type: GET_SINGLE_STUDENT, student})
+
+const addNewCampus = (campus) => ({ type: ADD_NEW_CAMPUS, campus})
+const addNewStudent = (student) => ({ type: ADD_NEW_STUDENT, student})
 
 //STATE
 const campusState = {
@@ -39,6 +45,8 @@ const campusReducer = (state = campusState, action) => {
       return {...state, campuses: [...state.campuses, ...action.campuses] }
     case GET_SINGLE_CAMPUS:
       return {...state, singleCampus: action.campus }
+    case ADD_NEW_CAMPUS:
+      return {...state, campuses: [...state.campuses, action.campus] }
     default:
       return state
   }
@@ -51,6 +59,8 @@ const studentReducer = (state = studentState, action) => {
         return {...state, students: [...state.students, ...action.students] }
     case GET_SINGLE_STUDENT:
       return {...state, singleStudent: action.student }
+    case ADD_NEW_STUDENT:
+        return {...state, students: [...state.students, action.student] }
     default:
       return state
   }
@@ -93,10 +103,31 @@ export const fetchSingleStudent = (id) => (dispatch) => {
   return axios.get(`/api/students/${id}`)
     .then(res => res.data)
     .then(( [student] ) => {
-      console.log('THUNK_FETCH_SINGLE_STUDENT')
+      // console.log('THUNK_FETCH_SINGLE_STUDENT')
       dispatch(getSingleStudent(student))
     })
     .catch(e => console.error('***ERROR IN fetchSingleStudent:', e))
+}
+
+export const postNewCampus = (campus) => (dispatch) => {
+  console.log('IN AXIOS POST CAMPUS', campus)
+  return axios.post('/api/campuses', campus)
+    .then(res => res.data)
+    .then(( newCampus ) => {
+      console.log('### SUCCESS THUNK_POST_CAMPUS:', newCampus)
+      dispatch(addNewCampus(newCampus))
+    })
+    .catch(e => console.error('***ERROR IN postNewCampus:', e))
+}
+
+export const postNewStudent = (student) => (dispatch) => {
+  return axios.post('/api/students', student)
+    .then(res => res.data)
+    .then((newStudent) => {
+      console.log('### THUNK_POST_STUDENT:', newStudent)
+      dispatch(addNewStudent(newStudent))
+    })
+    .catch(e => console.error('***ERROR IN postNewStudent:', e))
 }
 
 //root reducer

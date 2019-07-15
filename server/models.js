@@ -6,11 +6,11 @@ const Campus = db.define('campus', {
   name: {
     type: Sequelize.STRING,
     allowNull: false,
-    notEmpty: true
+    notEmpty: true,
   },
   imageUrl: {
     type: Sequelize.STRING,
-    defaultValue: '',
+    defaultValue: faker.image.nature(),
     isUrl: true,
   },
   address: {

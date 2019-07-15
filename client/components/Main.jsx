@@ -29,7 +29,7 @@ class Main extends Component {
             <Redirect to="/" />
           </Switch>
         </main>
-      </div>  
+      </div>
     )
   }
 }

@@ -1,13 +1,22 @@
 const express = require('express')
 const path = require('path')
+const bodyParser = require('body-parser')
 const app = express()
 const { db, Campus, Student} = require('./models')
 const faker = require('faker')
 
 app.use('/api', require('./routes'))
 
-// app.use(express.urlencoded({extended: true}));
-app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: false}));
+app.use(bodyParser.json());
+
+// app.get('/*', function(req, res) {
+//   res.sendFile(path.join(__dirname, '../public'), function(err) {
+//     if (err) {
+//       res.status(500).send(err)
+//     }
+//   })
+// })
 
 app.use(express.static(path.join(__dirname, '../public')))
 
@@ -77,5 +86,8 @@ db.sync({ force: true })
 
 
 app.use((err, req, res, next) => {
-  res.status(err.status || 500).send(err.message || 'Internal Server Error');
+  if (err) { res.sendFile(path.join(__dirname, '../public')) }
+  else {
+    res.status(err.status || 500).send(err.message || 'Internal Server Error');
+  }
 });
