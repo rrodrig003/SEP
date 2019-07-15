@@ -14,6 +14,9 @@ const GET_SINGLE_STUDENT = 'GET_SINGLE_STUDENT'
 const ADD_NEW_CAMPUS = 'ADD_NEW_CAMPUS'
 const ADD_NEW_STUDENT = 'ADD_NEW_STUDENT'
 
+const REMOVE_CAMPUS = 'REMOVE_CAMPUS'
+const REMOVE_STUDENT = 'REMOVE_STUDENT'
+
 //ACTION CREATORS
 
 const getCampuses = (campuses) => ({ type: GET_CAMPUSES, campuses})
@@ -26,6 +29,9 @@ const getSingleStudent = (student) => ({ type: GET_SINGLE_STUDENT, student})
 
 const addNewCampus = (campus) => ({ type: ADD_NEW_CAMPUS, campus})
 const addNewStudent = (student) => ({ type: ADD_NEW_STUDENT, student})
+
+const removeCampus = (id) => ({ type: REMOVE_CAMPUS, id})
+const removeStudent = (id) => ({ type: REMOVE_STUDENT, id})
 
 //STATE
 const campusState = {
@@ -47,6 +53,9 @@ const campusReducer = (state = campusState, action) => {
       return {...state, singleCampus: action.campus }
     case ADD_NEW_CAMPUS:
       return {...state, campuses: [...state.campuses, action.campus] }
+    case REMOVE_CAMPUS:
+      const filtered = state.campuses.filter(elem => elem.id !== action.id)
+      return {...state, campuses: [...filtered] }
     default:
       return state
   }
@@ -60,7 +69,10 @@ const studentReducer = (state = studentState, action) => {
     case GET_SINGLE_STUDENT:
       return {...state, singleStudent: action.student }
     case ADD_NEW_STUDENT:
-        return {...state, students: [...state.students, action.student] }
+      return {...state, students: [...state.students, action.student] }
+    case REMOVE_STUDENT:
+      const filtered = state.students.filter(elem => elem.id !== action.id)
+      return {...state, students: [...filtered] }
     default:
       return state
   }
@@ -128,6 +140,24 @@ export const postNewStudent = (student) => (dispatch) => {
       dispatch(addNewStudent(newStudent))
     })
     .catch(e => console.error('***ERROR IN postNewStudent:', e))
+}
+
+export const deleteCampus = (id) => (dispatch) => {
+  const campusId = parseInt(id, 10)
+  return axios.delete(`/api/campuses/${id}`)
+    .then(( {campus} ) => {
+      dispatch(removeCampus(campusId))
+    })
+    .catch(e => console.error('***ERROR IN deleteCampuses:', e))
+}
+
+export const deleteStudent = (id) => (dispatch) => {
+  const studentId = parseInt(id, 10)
+  return axios.delete(`/api/students/${id}`, {id})
+    .then(({student}) => {
+      dispatch(removeStudent(studentId))
+    })
+    .catch(e => console.error('***ERROR IN deleteStudents:', e))
 }
 
 //root reducer

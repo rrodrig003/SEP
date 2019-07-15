@@ -10,15 +10,11 @@ app.use('/api', require('./routes'))
 app.use(bodyParser.urlencoded({ extended: false}));
 app.use(bodyParser.json());
 
-// app.get('/*', function(req, res) {
-//   res.sendFile(path.join(__dirname, '../public'), function(err) {
-//     if (err) {
-//       res.status(500).send(err)
-//     }
-//   })
-// })
-
 app.use(express.static(path.join(__dirname, '../public')))
+
+app.get('*', function (request, response){
+  response.sendFile(path.resolve(__dirname, '../public', 'index.html'))
+})
 
 const generateGPA = () => (Math.random() * (+4 - +0) + +0)
 

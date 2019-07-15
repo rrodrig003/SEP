@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { postNewCampus } from '../store';
+import { postNewCampus, deleteCampus } from '../store';
 const faker = require('faker')
 
 class Campuses extends Component {
 	render() {
-		const { campuses, addCampus } = this.props;
+		const { campuses, addCampus, removeCampus } = this.props;
 
 		return (
 			<div>
@@ -17,6 +17,7 @@ class Campuses extends Component {
 							<li key={campus.id}>
 								<Link to={`/campuses/${campus.id}`}>{campus.name}</Link>
 								<img src={campus.imageUrl} />
+								<button type="button" onClick={() => removeCampus(campus.id)} >X</button>
 							</li>
 						);
 					})}
@@ -50,9 +51,16 @@ const mapDispatchToProps = (dispatch) => {
 				address: ev.target.address.value,
 				description: ev.target.description.value || faker.lorem.sentences(),
 			}
-			console.log('IN CAMPUS DISPATCH TO PROPS', campus)
+			ev.target.name.value = ''
+			ev.target.imageUrl.value = ''
+			ev.target.address.value = ''
+			ev.target.description.value = ''
 			dispatch(postNewCampus(campus))
-    }
+		},
+		removeCampus: function(id) {
+			console.log('IN REMOVE CAMPUS DISPATCH TO PROPS', id)
+			dispatch(deleteCampus(id))
+		}
   }
 }
 

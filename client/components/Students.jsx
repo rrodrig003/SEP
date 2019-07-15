@@ -1,14 +1,14 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { postNewStudent } from "../store";
+import { postNewStudent, deleteStudent } from "../store";
 const faker = require("faker");
 
 const generateGPA = () => Math.random() * (+4 - +0) + +0;
 
 class Students extends Component {
 	render() {
-		const { students, addStudent } = this.props;
+		const { students, addStudent, removeStudent } = this.props;
 
 		return (
 			<div>
@@ -17,6 +17,7 @@ class Students extends Component {
 					{students.map(student => (
 						<li key={student.id}>
 							<Link to={`/students/${student.id}`}>{`${student.firstName} ${student.lastName}`}</Link>
+              <button type="button" onClick={() => removeStudent(student.id)} >X</button>
 						</li>
 					))}
 				</ul>
@@ -52,9 +53,18 @@ const mapDispatchToProps = dispatch => {
 				email: ev.target.email.value,
 				imageUrl: ev.target.imageUrl.value || faker.image.avatar(),
 				gpa: ev.target.gpa.value || generateGPA()
-			};
+      };
+      ev.target.firstName.value = ''
+      ev.target.lastName.value = ''
+      ev.target.email.value = ''
+      ev.target.imageUrl.value = ''
+      ev.target.gpa.value  = ''
 			console.log('IN Student DISPATCH TO PROPS', student);
 			dispatch(postNewStudent(student));
+		},
+		removeStudent: function(id) {
+			console.log('IN REMOVE STUDENT DISPATCH TO PROPS', id)
+			dispatch(deleteStudent(id))
 		}
 	};
 };

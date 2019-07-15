@@ -21,7 +21,6 @@ class Main extends Component {
         <Navbar />
         <main>
           <Switch>
-            {/* <Route path="/" component={Campuses} /> */}
             <Route exact path="/campuses" component={Campuses} />
             <Route exact path="/students" component={Students} />
             <Route path="/campuses/:campusId" component={SingleCampus} />

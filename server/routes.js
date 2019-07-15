@@ -67,4 +67,34 @@ router.post('/students', (req, res, next) => {
     })
 })
 
+router.delete('/students/:id', (req, res, next) => {
+  const studentId = parseInt(req.params.id, 10)
+  return Student.destroy({
+    where: { id: studentId }
+    })
+    .then(destroyedStudent => {
+      console.log('destroyed Student')
+      return res.send({studentId})
+    })
+    .catch(e => {
+      console.log(e)
+      next(e)
+    })
+})
+
+router.delete('/campuses/:id', (req, res, next) => {
+  const campusId = parseInt(req.params.id, 10)
+  return Campus.destroy({
+    where: { id: campusId }
+    })
+    .then(destroyedCampus => {
+      console.log('destroyed Campus')
+      return res.send({campusId})
+    })
+    .catch(e => {
+      console.log(e)
+      next(e)
+    })
+})
+
 module.exports = router
