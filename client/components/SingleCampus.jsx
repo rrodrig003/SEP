@@ -17,10 +17,8 @@ class SingleCampus extends Component {
   }
 
   render() {
-    let campusArr = Object.values(this.props.campus)
 
     const { campus } = this.props
-
     return (
       <div>
         <h1>{campus.name}</h1>
@@ -29,9 +27,9 @@ class SingleCampus extends Component {
         <p>{campus.description}</p>
         <ul>
         {
-          !campusArr.length
+          campus.students === undefined || []
           ?
-          <div>SORRY! No students enrolled at this time.</div>
+          <div style={{color: 'red'}}>SORRY! No students enrolled at this time.</div>
           :
           campus.students.map(student => <li key={student.id}><Link to={`/students/${student.id}`} >{`${student.firstName} ${student.lastName}`}</Link></li>)
         }

@@ -33,7 +33,7 @@ router.get('/campuses/:id', (req, res, next) => {
   const campusId = parseInt(req.params.id, 10)
   return Campus.findAll({
     where: { id: campusId },
-    include: [ Student ]
+    include: Student
     })
     .then(campus => {
       return res.send(campus)

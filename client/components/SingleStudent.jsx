@@ -10,14 +10,14 @@ class SingleStudent extends Component {
       const response = await store.dispatch(fetchSingleStudent(this.props.match.params.studentId))
       if (!response.ok) throw Error(response.statusText)
     } catch (error) {
-      console.log('### ERROR IN CATCH SINGLE STUDENT', error)
+      console.log('### ERROR IN ASYNC CATCH SINGLE STUDENT', error)
     }
   }
 
   render() {
-    let studentArr = Object.values(this.props.student)
 
     const { student } = this.props
+    console.log(student.campus)
     return (
       <div>
         <h1>{`${student.firstName} ${student.lastName}`}</h1>
@@ -26,12 +26,12 @@ class SingleStudent extends Component {
         <h3>{student.gpa}</h3>
         <ul>
           {
-            !studentArr.length
+            !student.campus
             ?
-            <div>STUDENT NOT ENROLLED IN A CAMPUS</div>
+            <div style={{color: 'red'}} >STUDENT NOT ENROLLED IN A CAMPUS</div>
             :
             <li>
-            <Link to={`/campuses/${student.campus.id}`} >{student.campus.name}</Link>
+            <Link to={`/campuses/${student.campus.id}`}>{student.campus.name}</Link>
             </li>
           }
         </ul>
